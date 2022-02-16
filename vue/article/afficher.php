@@ -2,6 +2,9 @@
 
     <h1><?= $article['titre'] ?> </h1>
     <legend>Ecrit par : <?= $article['pseudo'] ?></legend>
+    <?php foreach($listeCategorie as $categorie) { ?>
+        <span class="badge bg-primary"><?= $categorie['nom'] ?></span>
+    <?php } ?>
 
     <p>
         <?= $article['contenu'] ?>

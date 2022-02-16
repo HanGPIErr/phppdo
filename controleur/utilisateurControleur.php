@@ -10,7 +10,13 @@ class utilisateurControleur extends BaseControleur {
         public function liste() {
             $connexion = new \PDOperso();
 
-            $requete = $connexion->prepare("SELECT * FROM utilisateur");
+            $requete = $connexion->prepare(
+                "SELECT * 
+                FROM utilisateur
+                LEFT JOIN droit ON utilisateur.id_droit = droit.id
+                "
+                );
+
             $requete->execute();
             $listeUtilisateur = $requete->fetchAll();
 
@@ -23,12 +29,18 @@ class utilisateurControleur extends BaseControleur {
             if(isset($_POST['valider'])) {
 
                 $connexion = new PDOperso();
-                $requete = $connexion->prepare("SELECT * FROM utilisateur WHERE pseudo = ?");
+                $requete = $connexion->prepare("SELECT * 
+                FROM utilisateur 
+                LEFT JOIN droit  ON droit.id = utilisateur.id_droit 
+                WHERE pseudo = ?");
+
                 $requete->execute([
                     $_POST['pseudo']
                 ]);
                 // on récupere l'utilisateur ayant le pseudo saisi
                 $utilisateur = $requete->fetch();
+
+                var_dump($utilisateur);
 
                 //si lutilisateur exite bien
                 if($utilisateur) {
@@ -37,7 +49,7 @@ class utilisateurControleur extends BaseControleur {
                     if(password_verify($_POST['mot_de_passe'], $utilisateur['mot_de_passe'])) {
                             $_SESSION['id'] = $utilisateur['id'];
                             $_SESSION['pseudo'] = $utilisateur['pseudo'];
-                            $_SESSION['admin'] = $utilisateur['admin'];
+                            $_SESSION['droit'] = $utilisateur['denomination'];
 
                             header("Location: " . Conf::URL);
                             
@@ -45,12 +57,12 @@ class utilisateurControleur extends BaseControleur {
                         $erreurPseudo = true;
                         //si lutilisateur à saisi un mauvais mot de passe = erreur
                     }
-                    } else {
-                        //si lutilisateur a saisi un mauvais pseudo = erreur
-                        $erreurPseudo = true;
-                    }
+                } else {
+                    //si lutilisateur a saisi un mauvais pseudo = erreur
+                    $erreurPseudo = true;
                 }
             
+            }
 
             $parametres = compact('erreurPseudo');
 

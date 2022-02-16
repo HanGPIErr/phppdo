@@ -94,6 +94,14 @@ $controleur = new $nomControleur();
           }
         ?>
       </ul>
+          <?php
+          if(isset($_SESSION['pseudo'])){
+          ?>
+      <div class="m-4">
+          Bienvenue <?= $_SESSION['pseudo'] ?>
+      </div>
+      <?php } ?>
+
       <!--FAIRE UNE RECHERCHE PHP ne pas oublier le name recherche dans input--->
       <form method="GET" class="d-flex" action="<?= Conf::URL?>article/recherche">
         <input name="parametre" class="form-control me-sm-2" type="text" placeholder="Titre, contenu...">
